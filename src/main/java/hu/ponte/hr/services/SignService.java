@@ -14,7 +14,7 @@ import java.util.Base64;
 @Service
 public class SignService {
 
-    public static String sign(byte[] image, PrivateKey privateKey) throws Exception {
+    public String sign(byte[] image, PrivateKey privateKey) throws Exception {
         Signature privateSignature = Signature.getInstance("SHA256withRSA");
         privateSignature.initSign(privateKey);
         privateSignature.update(image);
@@ -25,7 +25,7 @@ public class SignService {
     }
 
 
-    public static boolean verify(byte[] image, String signature, PublicKey publicKey) throws Exception {
+    public boolean verify(byte[] image, String signature, PublicKey publicKey) throws Exception {
         Signature publicSignature = Signature.getInstance("SHA256withRSA");
         publicSignature.initVerify(publicKey);
         publicSignature.update(image);
@@ -36,7 +36,7 @@ public class SignService {
     }
 
 
-    public static PrivateKey getPrivateKey(String filename) throws Exception {
+    public PrivateKey getPrivateKey(String filename) throws Exception {
             byte[] keyBytes = Files.readAllBytes(Paths.get("src\\main\\resources\\config\\keys\\"+filename));
 
             PKCS8EncodedKeySpec spec =
@@ -45,7 +45,7 @@ public class SignService {
             return kf.generatePrivate(spec);
         }
 
-    public static PublicKey getPublicKey(String filename) throws Exception {
+    public PublicKey getPublicKey(String filename) throws Exception {
 
         byte[] keyBytes = Files.readAllBytes(Paths.get(filename));
 

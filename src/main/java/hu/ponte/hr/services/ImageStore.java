@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.security.PrivateKey;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -30,25 +31,14 @@ public class ImageStore {
 
     private final ImageMetaJpaRepository imageMetaJpaRepository;
 
-    @Autowired
     private SignService signService;
 
 
 
 
-    public List<ImageMeta> findAll() {
-        return imageMetaJpaRepository.findAll().stream().map(imageMetaJpaEntity -> ImageMeta.builder()
-                .name(imageMetaJpaEntity.getName())
-                .mimeType(imageMetaJpaEntity.getMimeType())
-                .size(imageMetaJpaEntity.getSize())
-                .digitalSign(imageMetaJpaEntity.getDigitalSign())
-                .build()).collect(Collectors.toList());
-    }
-
-
-    public Image findById(Long imageId) throws Exception {
+    public Image findById(Long imageId) throws NoSuchElementException {
         ImageJpaEntity imageJpaEntity = imageJpaRepository.findById(imageId)
-                .orElseThrow(() -> new Exception("No image with" + " " + imageId));
+                .orElseThrow(() -> new NoSuchElementException("No image with" + " " + imageId));
 
         ImageMetaJpaEntity imageMetaJpaEntity = imageJpaEntity.getImageMetaJpaEntity();
 

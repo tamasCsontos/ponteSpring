@@ -8,12 +8,14 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "imageMeta")
-@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class ImageMetaJpaEntity {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private String id;
+        private long id;
 
         private String name;
         private String mimeType;

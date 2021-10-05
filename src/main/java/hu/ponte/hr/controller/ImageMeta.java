@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 public class ImageMeta
 {
-	private String id;
+	private long id;
 
 	private String name;
 	private String mimeType;
