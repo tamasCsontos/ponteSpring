@@ -37,7 +37,7 @@ public class SignService {
 
 
     public static PrivateKey getPrivateKey(String filename) throws Exception {
-            byte[] keyBytes = Files.readAllBytes(Paths.get(filename));
+            byte[] keyBytes = Files.readAllBytes(Paths.get("src\\main\\resources\\config\\keys\\"+filename));
 
             PKCS8EncodedKeySpec spec =
                     new PKCS8EncodedKeySpec(keyBytes);

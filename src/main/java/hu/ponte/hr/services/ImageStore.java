@@ -19,9 +19,9 @@ public class ImageStore {
 
 
     private final long maxSize = 2000000;
+    //maxSize in byte
 
     private final String privateKeyFileName = "key.private";
-    //maxSize in byte
 
     private final ImageRepository imageRepository;
 

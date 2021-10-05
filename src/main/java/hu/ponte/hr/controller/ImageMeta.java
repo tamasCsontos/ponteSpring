@@ -23,6 +23,8 @@ public class ImageMeta
 	private String name;
 	private String mimeType;
 	private long size;
+
+	@Column(columnDefinition = "LONGTEXT")
 	private String digitalSign;
 
 	@Lob
