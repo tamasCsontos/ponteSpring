@@ -1,11 +1,13 @@
 package hu.ponte.hr.repository;
 
 
-
-import hu.ponte.hr.controller.ImageMeta;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface ImageRepository extends CrudRepository<ImageMeta, Long> {
+public interface ImageMetaJpaRepository extends CrudRepository<ImageMetaJpaEntity, Long> {
+
+    List<ImageMetaJpaEntity> findAll();
 }
