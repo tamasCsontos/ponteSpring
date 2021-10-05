@@ -43,7 +43,9 @@ public class ImageStore {
         ImageMetaJpaEntity imageMetaJpaEntity = imageJpaEntity.getImageMetaJpaEntity();
 
         return Image.builder()
+                .id(String.valueOf(imageJpaEntity.getId()))
                 .imageMeta(ImageMeta.builder()
+                        .id(String.valueOf(imageMetaJpaEntity.getId()))
                         .name(imageMetaJpaEntity.getName())
                         .mimeType(imageMetaJpaEntity.getMimeType())
                         .size(imageMetaJpaEntity.getSize())

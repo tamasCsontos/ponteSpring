@@ -19,7 +19,7 @@ public class ImageMetaStore {
 
     public List<ImageMeta> findAll() {
         return imageMetaJpaRepository.findAll().stream().map(imageMetaJpaEntity -> ImageMeta.builder()
-                .id(imageMetaJpaEntity.getId())
+                .id(String.valueOf(imageMetaJpaEntity.getId()))
                 .name(imageMetaJpaEntity.getName())
                 .mimeType(imageMetaJpaEntity.getMimeType())
                 .size(imageMetaJpaEntity.getSize())

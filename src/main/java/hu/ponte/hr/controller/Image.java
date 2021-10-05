@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class Image {
 
-    private long id;
+    private String id;
 
     private ImageMeta imageMeta;
 
