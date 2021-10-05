@@ -1,7 +1,11 @@
 package hu.ponte.hr.services;
 
+import hu.ponte.hr.controller.Image;
 import hu.ponte.hr.controller.ImageMeta;
-import hu.ponte.hr.repository.ImageRepository;
+import hu.ponte.hr.repository.ImageJpaEntity;
+import hu.ponte.hr.repository.ImageJpaRepository;
+import hu.ponte.hr.repository.ImageMetaJpaEntity;
+import hu.ponte.hr.repository.ImageMetaJpaRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.PrivateKey;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 @AllArgsConstructor
@@ -23,17 +29,41 @@ public class ImageStore {
 
     private final String privateKeyFileName = "key.private";
 
-    private final ImageRepository imageRepository;
+    private final ImageJpaRepository imageJpaRepository;
+
+    private final ImageMetaJpaRepository imageMetaJpaRepository;
+
+    @Autowired
+    private SignService signService;
 
 
 
-    public Iterable<ImageMeta> findAll() {
-        return imageRepository.findAll();
+
+    public List<ImageMeta> findAll() {
+        return imageMetaJpaRepository.findAll().stream().map(imageMetaJpaEntity -> ImageMeta.builder()
+                .name(imageMetaJpaEntity.getName())
+                .mimeType(imageMetaJpaEntity.getMimeType())
+                .size(imageMetaJpaEntity.getSize())
+                .digitalSign(imageMetaJpaEntity.getDigitalSign())
+                .build()).collect(Collectors.toList());
     }
 
 
-    public ImageMeta findById(Long imageId) throws Exception {
-        return imageRepository.findById(imageId).orElseThrow(() -> new Exception("No image with" + " " + imageId));
+    public Image findById(Long imageId) throws Exception {
+        ImageJpaEntity imageJpaEntity = imageJpaRepository.findById(imageId)
+                .orElseThrow(() -> new Exception("No image with" + " " + imageId));
+
+        ImageMetaJpaEntity imageMetaJpaEntity = imageJpaEntity.getImageMetaJpaEntity();
+
+        return Image.builder()
+                .imageMeta(ImageMeta.builder()
+                        .name(imageMetaJpaEntity.getName())
+                        .mimeType(imageMetaJpaEntity.getMimeType())
+                        .size(imageMetaJpaEntity.getSize())
+                        .digitalSign(imageMetaJpaEntity.getDigitalSign())
+                        .build())
+                .data(imageJpaEntity.getData())
+                .build();
     }
 
     public String save(MultipartFile request) {
@@ -43,50 +73,34 @@ public class ImageStore {
 
         if (!request.isEmpty()) {
             if (request.getSize() <= maxSize) {
-                ImageMeta image = null;
+
                 try {
-                    PrivateKey privateKey = SignService.getPrivateKey(privateKeyFileName);
-                    image = ImageMeta.builder()
+
+                    PrivateKey privateKey = signService.getPrivateKey(privateKeyFileName);
+                    ImageMetaJpaEntity imageMetaJpaEntity = ImageMetaJpaEntity.builder()
                             .name(request.getOriginalFilename())
                             .mimeType(request.getContentType())
                             .size(request.getSize())
-                            .data(request.getBytes())
-                            .digitalSign(SignService.sign(request.getBytes(), privateKey))
+                            .digitalSign(signService.sign(request.getBytes(), privateKey))
                             .build();
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return e.toString();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                imageRepository.save(image);
+                    ImageJpaEntity imageJpaEntity = ImageJpaEntity.builder()
+                            .imageMetaJpaEntity(imageMetaJpaEntity)
+                            .data(request.getBytes())
+                            .build();
 
-                return "ok";
+                    imageJpaRepository.save(imageJpaEntity);
+                    return "ok";
+
+                } catch (Exception e) {
+                    log.error("",e);
+                    return e.toString();
+                }
 
             } else return "Image size is above 2 mb";
         }
 
         return "no image";
     }
-
-
-    public ResponseEntity<?> delete(Long imageId) throws Exception {
-            ImageMeta image = imageRepository.findById(imageId).orElseThrow(() -> new Exception("Not found image with" + " " + imageId));
-
-            imageRepository.delete(image);
-
-            return ResponseEntity.ok("Image deleted successfully with id" + image);
-        }
-
-
-    public ResponseEntity<?> deleteAll() throws Exception {
-        imageRepository.deleteAll();
-
-        return ResponseEntity.ok("All images deleted");
-    }
-
-
-
 
 }
