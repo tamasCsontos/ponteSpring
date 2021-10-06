@@ -1,6 +1,6 @@
 package hu.ponte.hr.controller;
 
-import hu.ponte.hr.repository.ImageMetaJpaEntity;
+
 import lombok.Builder;
 import lombok.Data;
 

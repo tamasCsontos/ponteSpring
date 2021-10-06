@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import hu.ponte.hr.repository.ImageMetaJpaRepository;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor

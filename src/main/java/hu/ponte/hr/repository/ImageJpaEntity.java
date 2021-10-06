@@ -1,12 +1,12 @@
 package hu.ponte.hr.repository;
 
 
-import hu.ponte.hr.controller.ImageMeta;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.engine.internal.Cascade;
+
 
 import javax.persistence.*;
 
